@@ -1,5 +1,4 @@
-from datetime import datetime
-from collections import defaultdict
+from datetime import datetime, timedelta
 
 
 def get_birthdays_per_week(users: list) -> None:
@@ -9,32 +8,34 @@ def get_birthdays_per_week(users: list) -> None:
     :param users: is a list of dicts where there are pairs ('name': 'string')
     and ('birthday': datetime object)
     """
-    birth_dict = defaultdict(str)
+    birth_days = {}
+    for ind_ in range(7):
+        birth_days[datetime.strftime(datetime.now() + timedelta(days=ind_), '%A')] = []
     for person in users:
-        day_dif = (person['birthday'] - datetime.now())
-        if day_dif.days <= 7:
+        year_ = datetime.now().year
+        day_dif = (datetime.now() - person['birthday'].replace(year=year_))
+        if 0 <= day_dif.days <= 7:
             day = datetime.strftime(person['birthday'], '%A')
-            if (day == 'Saturday') or (day == 'Sunday'):
+            if day in ('Saturday', 'Sunday'):
                 day = 'Monday'
-            birth_dict[f'{day}'] += (person['name']) + ', '
-    for key in birth_dict:
-        if birth_dict[key].endswith(', '):
-            birth_dict[key] = birth_dict[key][0:-2]
-        print(key, ': ', birth_dict[key])
+            birth_days[f'{day}'].append(person['name'])
+    for b_day in birth_days:
+        if birth_days[b_day]:
+            print(b_day, ': ', ', '.join(birth_days[b_day]))
 
 
 if __name__ == '__main__':
     users_ = [
-        {'name': 'Jim', 'birthday': datetime(2022, 9, 23)},
-        {'name': 'Anna', 'birthday': datetime(2022, 9, 24)},
-        {'name': 'Perry', 'birthday': datetime(2022, 9, 24)},
-        {'name': 'Mike', 'birthday': datetime(2022, 9, 25)},
-        {'name': 'Robin', 'birthday': datetime(2022, 9, 26)},
-        {'name': 'Vika', 'birthday': datetime(2022, 9, 26)},
-        {'name': 'Miranda', 'birthday': datetime(2022, 9, 27)},
-        {'name': 'Robin', 'birthday': datetime(2022, 9, 28)},
-        {'name': 'Vika', 'birthday': datetime(2022, 9, 28)},
-        {'name': 'Miranda', 'birthday': datetime(2022, 10, 1)}
+        {'name': 'Jim', 'birthday': datetime(1975, 10, 23)},
+        {'name': 'Miranda', 'birthday': datetime(2010, 10, 27)},
+        {'name': 'Robin', 'birthday': datetime(2001, 9, 28)},
+        {'name': 'Vika', 'birthday': datetime(2005, 9, 28)},
+        {'name': 'Miranda', 'birthday': datetime(2003, 10, 1)},
+        {'name': 'Anna', 'birthday': datetime(2002, 9, 24)},
+        {'name': 'Perry', 'birthday': datetime(1985, 9, 24)},
+        {'name': 'Mike', 'birthday': datetime(1999, 9, 25)},
+        {'name': 'Robin', 'birthday': datetime(1980, 10, 26)},
+        {'name': 'Vika', 'birthday': datetime(2000, 9, 26)}
     ]
 
     get_birthdays_per_week(users_)
